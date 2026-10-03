@@ -1,0 +1,65 @@
+
+name: Build Eagle Education APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+jobs:
+  build: 
+    runs-on: Eagle Education
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with: 
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools live classes and video and short notes upload tu owner 
+          
+      - name: Install SDK Packages
+        run: |
+          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Extract ZIP
+        run: |
+          mkdir extracted
+          unzip -o EAGLE_EDUCATION_ANDROID_STUDIO_PROJECT.zip -d extracted
+
+      - name: Check Android Project
+        run: |
+          find extracted -maxdepth 4 -type f | head -100
+          find extracted -name gradlew -o -name build.gradle -o -name build.gradle.kts
+      - name: Build APK
+        run: |
+          cd extracted/EagleEducationAndroid
+          gradle assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: EAGLE-EDUCATION-APK
+          path: extracted/EagleEducationAndroid/app/build/outputs/apk/debug/app-debug.apk
+owner permissions: id password change env:
+sealed class Screen(val title: String) {
+    object StudentPanel : Screen("Student Panel")
+    object Courses : Screen("Courses")
+    object Videos : Screen("Videos")
+    object Notes : Screen("Notes")
+
+    object OwnerPanel : Screen("Owner Panel")
+    object Login : Screen("Login")
+    object Dashboard : Screen("Dashboard")
+    object UploadVideo : Screen("Upload Video")
+    object UploadNotes : Screen("Upload Notes")
+    object ManageVideos : Screen("Manage Videos")
+    object ManageNotes : Screen("Manage Notes")
+    object Logout : Screen("Logout")
+}
